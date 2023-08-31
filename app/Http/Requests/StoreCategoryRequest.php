@@ -21,10 +21,12 @@ class StoreCategoryRequest extends FormRequest
     public function messages()
     {
         return [
+
             'name.required' => 'Поле "name" обязательно',
             'name.string' => 'Поле "name" должно быть строкой',
             'name.min' => 'Поле "name" минимум 3 символа',
             'name.max' => 'Поле "name" максимум 100 символа',
+
         ];
     }
 }

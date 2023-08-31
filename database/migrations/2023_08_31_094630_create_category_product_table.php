@@ -22,7 +22,8 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             $table->foreignIdFor(Product::class)
-                ->constrained();
+                ->constrained()
+            ->cascadeOnDelete();
 
             $table->timestamps();
         });

@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
 
             $table->string('name', 100);
-            $table->decimal('price');
+            $table->integer('price');
             $table->boolean('is_published')->default(true);
+
+            $table->softDeletes();
 
             $table->timestamps();
         });
