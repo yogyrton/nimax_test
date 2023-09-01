@@ -5,14 +5,34 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ProductResource;
+use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return ProductResource::collection(Product::all());
+        $products = Product::query();
+
+        if ($request->category_id || $request->category_name) {
+            $products
+                ->categoryId($request->category_id)
+                ->categoryName($request->category_name);
+
+            return ProductResource::collection($products->get());
+        }
+
+        $products
+            ->when($request->has('name'), fn(Builder $query) => $query->where('name', 'LIKE', "%$request->name%"))
+            ->when($request->has('is_published'), fn(Builder $query) => $query->where('is_published', $request->is_published))
+            ->when($request->has('min_price'), fn(Builder $query) => $query->where('price', '>=', $request->min_price))
+            ->when($request->has('max_price'), fn(Builder $query) => $query->where('price', '<=', $request->max_price));
+
+        return ProductResource::collection($products->get());
     }
 
     public function store(StoreProductRequest $request)
